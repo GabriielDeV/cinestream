@@ -1,0 +1,199 @@
+/* ── Section layout ───────────────────────────────────────── */
+.content-section {
+  padding: 48px 0 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 var(--spacing-container-margin);
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.section-see-all {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    color: var(--color-primary-light);
+  }
+}
+
+/* ── Carousel wrapper ─────────────────────────────────────── */
+.carousel-wrapper {
+  position: relative;
+
+  /* Gradient fade — hints at overflow without hiding cards */
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 20px; /* aligns with scroll container bottom padding */
+    width: 80px;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  &::before {
+    left: 0;
+    background: linear-gradient(
+      to right,
+      var(--color-background) 0%,
+      transparent 100%
+    );
+  }
+
+  &::after {
+    right: 0;
+    background: linear-gradient(
+      to left,
+      var(--color-background) 0%,
+      transparent 100%
+    );
+  }
+}
+
+/* ── Navigation buttons ───────────────────────────────────── */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  background: rgba(16, 20, 21, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: rgba(0, 168, 232, 0.22);
+    border-color: var(--color-primary);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  &--prev {
+    left: 10px;
+  }
+
+  &--next {
+    right: 10px;
+  }
+}
+
+/* ── Scrollable row ───────────────────────────────────────── */
+.section-scroll-container {
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 8px var(--spacing-container-margin) 20px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-surface-high) transparent;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-surface-high);
+    border-radius: var(--radius-full);
+  }
+}
+
+.cards-row {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+
+  &--ranking {
+    gap: 20px;
+    padding-left: 20px;
+    align-items: flex-end;
+  }
+
+  &--poster {
+    gap: 14px;
+  }
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .section-header {
+    padding: 0 var(--spacing-gutter);
+  }
+
+  .section-scroll-container {
+    padding: 8px var(--spacing-gutter) 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .content-section {
+    padding-top: 32px;
+  }
+
+  .section-header {
+    padding: 0 var(--spacing-gutter);
+  }
+
+  .section-scroll-container {
+    padding: 8px var(--spacing-gutter) 16px;
+  }
+
+  .cards-row--ranking {
+    padding-left: 24px;
+  }
+
+  .carousel-btn {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* On very small screens, swipe is the primary gesture — hide buttons */
+@media (max-width: 480px) {
+  .carousel-btn {
+    display: none;
+  }
+
+  .carousel-wrapper::before,
+  .carousel-wrapper::after {
+    width: 32px;
+  }
+}

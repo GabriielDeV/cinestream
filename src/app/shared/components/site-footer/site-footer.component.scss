@@ -1,0 +1,138 @@
+.site-footer {
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-outline);
+  padding: 60px 0 0;
+  margin-top: var(--spacing-section-gap);
+}
+
+.footer-inner {
+  display: flex;
+  gap: 60px;
+  padding: 0 var(--spacing-container-margin) 48px;
+  max-width: 1600px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+/* Brand */
+.footer-brand {
+  flex: 0 0 220px;
+}
+
+.footer-logo {
+  display: inline-block;
+  text-decoration: none;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
+}
+
+.logo-cine {
+  color: var(--color-primary);
+}
+
+.logo-stream {
+  color: var(--color-text-primary);
+}
+
+.footer-tagline {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Nav groups */
+.footer-nav {
+  display: flex;
+  gap: 48px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.footer-nav-group {
+  flex: 1;
+  min-width: 120px;
+}
+
+.footer-nav-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin: 0 0 16px;
+}
+
+.footer-nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-nav-link {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--color-text-secondary);
+  }
+}
+
+/* Footer bottom */
+.footer-bottom {
+  border-top: 1px solid var(--color-outline);
+  padding: 20px var(--spacing-container-margin);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.footer-copy,
+.footer-disclaimer {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .footer-inner,
+  .footer-bottom {
+    padding-left: var(--spacing-gutter);
+    padding-right: var(--spacing-gutter);
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-inner {
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .footer-brand {
+    flex: none;
+  }
+
+  .footer-nav {
+    gap: 24px;
+  }
+
+  .footer-nav-group {
+    min-width: calc(50% - 12px);
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    gap: 4px;
+  }
+}

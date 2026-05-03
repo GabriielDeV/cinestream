@@ -1,0 +1,64 @@
+<app-site-header (search)="onSearch($event)" />
+
+@if (isLoading()) {
+  <div class="page-loading">
+    <app-loading />
+  </div>
+} @else if (error()) {
+  <main class="home-main">
+    <div class="page-error">
+      <app-error-message [message]="error()!" (retry)="onRetry()" />
+    </div>
+  </main>
+} @else {
+  <main class="home-main">
+    @if (heroMovie()) {
+      <app-hero-banner [movie]="heroMovie()!" />
+    }
+
+    <div class="sections-container">
+      @if (isSearchActive()) {
+        @if (isSearchLoading()) {
+          <app-loading />
+        } @else if (searchError()) {
+          <app-error-message [message]="searchError()!" [showRetry]="false" />
+        } @else if (searchResults().length === 0) {
+          <app-error-message
+            message="Nenhum filme encontrado para sua busca."
+            [showRetry]="false"
+          />
+        } @else {
+          <app-movie-section
+            title="Resultados da busca"
+            [movies]="searchResults()"
+            layout="landscape"
+          />
+        }
+      } @else {
+        @if (popularMovies().length > 0) {
+          <app-movie-section
+            title="Melhores filmes"
+            [movies]="popularMovies()"
+            layout="landscape"
+          />
+        }
+        @if (topRatedMovies().length > 0) {
+          <app-movie-section
+            title="Top 10 no Brasil"
+            [movies]="topRatedMovies()"
+            layout="ranking"
+          />
+        }
+        @if (upcomingMovies().length > 0) {
+          <app-movie-section
+            title="Lançamentos"
+            [movies]="upcomingMovies()"
+            layout="poster"
+          />
+        }
+      }
+    </div>
+  </main>
+}
+
+<app-site-footer />

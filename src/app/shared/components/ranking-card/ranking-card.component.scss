@@ -1,0 +1,108 @@
+.ranking-card {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+
+  &:hover {
+    transform: scale(1.04);
+
+    .card-overlay {
+      opacity: 1;
+    }
+
+    .card-image {
+      transform: scale(1.06);
+    }
+  }
+}
+
+.ranking-number {
+  position: absolute;
+  left: -18px;
+  bottom: -4px;
+  z-index: 1;
+  font-size: clamp(4rem, 8vw, 7rem);
+  font-weight: 900;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.25);
+  text-stroke: 2px rgba(255, 255, 255, 0.25);
+  font-style: italic;
+  user-select: none;
+  pointer-events: none;
+  letter-spacing: -4px;
+}
+
+.card-media {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-container);
+  width: 140px;
+  aspect-ratio: 2 / 3;
+  flex-shrink: 0;
+  margin-left: 48px;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+  background: var(--color-surface-container);
+}
+
+.card-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 7, 13, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  border-radius: var(--radius-md);
+}
+
+.card-play-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-full);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    transform: scale(1.1);
+  }
+}
+
+.card-info {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card-media {
+    width: 110px;
+    margin-left: 36px;
+  }
+
+  .ranking-number {
+    font-size: 4rem;
+    left: -14px;
+    letter-spacing: -2px;
+  }
+}

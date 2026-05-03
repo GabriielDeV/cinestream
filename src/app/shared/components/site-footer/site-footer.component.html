@@ -1,0 +1,28 @@
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a class="footer-logo" href="/">
+        <span class="logo-cine">Cine</span><span class="logo-stream">Stream</span>
+      </a>
+      <p class="footer-tagline">Sua plataforma de streaming com identidade própria.</p>
+    </div>
+
+    <nav class="footer-nav" aria-label="Links do rodapé">
+      @for (group of footerLinks; track group.title) {
+        <div class="footer-nav-group">
+          <h3 class="footer-nav-title">{{ group.title }}</h3>
+          <ul class="footer-nav-list">
+            @for (link of group.links; track link) {
+              <li><a class="footer-nav-link" href="#">{{ link }}</a></li>
+            }
+          </ul>
+        </div>
+      }
+    </nav>
+  </div>
+
+  <div class="footer-bottom">
+    <p class="footer-copy">&copy; {{ currentYear }} CineStream. Todos os direitos reservados.</p>
+    <p class="footer-disclaimer">CineStream é uma plataforma fictícia criada para fins de portfólio.</p>
+  </div>
+</footer>

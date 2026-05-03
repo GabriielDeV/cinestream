@@ -1,0 +1,24 @@
+<section class="content-section">
+  <div class="section-header">
+    <h2 class="section-title">{{ title }}</h2>
+    <a class="section-see-all" href="#" [attr.aria-label]="'Ver todos em ' + title">Ver tudo</a>
+  </div>
+
+  <div class="section-scroll-container">
+    @if (layout === 'ranking') {
+      <div class="cards-row cards-row--ranking">
+        @for (movie of movies; track movie.id) {
+          <app-ranking-card [movie]="movie" />
+        }
+      </div>
+    } @else {
+      <div class="cards-row"
+        [class.cards-row--poster]="layout === 'poster'"
+        [class.cards-row--landscape]="layout === 'landscape'">
+        @for (movie of movies; track movie.id) {
+          <app-movie-card [movie]="movie" [layout]="layout === 'poster' ? 'poster' : 'landscape'" />
+        }
+      </div>
+    }
+  </div>
+</section>
