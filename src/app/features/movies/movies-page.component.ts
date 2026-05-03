@@ -23,8 +23,7 @@ import { Movie } from '../../core/models/movie.model';
 import { TmdbService } from '../../core/services/tmdb.service';
 import { MovieMapper } from '../../core/mappers/movie.mapper';
 import { SiteHeaderComponent } from '../../shared/components/site-header/site-header.component';
-import { HeroBannerComponent } from '../../shared/components/hero-banner/hero-banner.component';
-import { MovieSectionComponent } from './components/movie-section/movie-section.component';
+import { MovieSectionComponent } from '../home/components/movie-section/movie-section.component';
 import { SiteFooterComponent } from '../../shared/components/site-footer/site-footer.component';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import { ErrorMessageComponent } from '../../shared/components/error-message/error-message.component';
@@ -37,40 +36,37 @@ const EMPTY_RESPONSE: TmdbMovieResponse = {
 };
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-movies-page',
   standalone: true,
   imports: [
     SiteHeaderComponent,
-    HeroBannerComponent,
     MovieSectionComponent,
     SiteFooterComponent,
     LoadingComponent,
     ErrorMessageComponent,
   ],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss',
+  templateUrl: './movies-page.component.html',
+  styleUrl: './movies-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeComponent implements OnInit {
+export class MoviesPageComponent implements OnInit {
   private readonly tmdbService = inject(TmdbService);
   private readonly mapper = inject(MovieMapper);
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
 
-  /* ── Page state (signals for OnPush compatibility) ─────────────────── */
-  isLoading = signal(true);
-  error = signal<string | null>(null);
+  readonly isLoading = signal(true);
+  readonly error = signal<string | null>(null);
 
-  heroMovie = signal<Movie | null>(null);
-  popularMovies = signal<Movie[]>([]);
-  topRatedMovies = signal<Movie[]>([]);
-  upcomingMovies = signal<Movie[]>([]);
+  readonly popularMovies = signal<Movie[]>([]);
+  readonly topRatedMovies = signal<Movie[]>([]);
+  readonly nowPlayingMovies = signal<Movie[]>([]);
+  readonly upcomingMovies = signal<Movie[]>([]);
 
-  /* ── Search state ───────────────────────────────────────────────────── */
-  searchResults = signal<Movie[]>([]);
-  isSearchActive = signal(false);
-  isSearchLoading = signal(false);
-  searchError = signal<string | null>(null);
+  readonly searchResults = signal<Movie[]>([]);
+  readonly isSearchActive = signal(false);
+  readonly isSearchLoading = signal(false);
+  readonly searchError = signal<string | null>(null);
 
   private cachedGenres: TmdbGenre[] = [];
   private cachedTvGenres: TmdbGenre[] = [];
@@ -83,40 +79,17 @@ export class HomeComponent implements OnInit {
 
   private loadData(): void {
     forkJoin({
-      genres: this.tmdbService
-        .getMovieGenres()
-        .pipe(catchError(() => of({ genres: [] as TmdbGenre[] }))),
-      tvGenres: this.tmdbService
-        .getTvShowGenres()
-        .pipe(catchError(() => of({ genres: [] as TmdbGenre[] }))),
-      nowPlaying: this.tmdbService
-        .getNowPlayingMovies()
-        .pipe(catchError(() => of(EMPTY_RESPONSE))),
-      popular: this.tmdbService
-        .getPopularMovies()
-        .pipe(catchError(() => of(EMPTY_RESPONSE))),
-      topRated: this.tmdbService
-        .getTopRatedMovies()
-        .pipe(catchError(() => of(EMPTY_RESPONSE))),
-      upcoming: this.tmdbService
-        .getUpcomingMovies()
-        .pipe(catchError(() => of(EMPTY_RESPONSE))),
+      genres: this.tmdbService.getMovieGenres().pipe(catchError(() => of({ genres: [] as TmdbGenre[] }))),
+      popular: this.tmdbService.getPopularMovies().pipe(catchError(() => of(EMPTY_RESPONSE))),
+      topRated: this.tmdbService.getTopRatedMovies().pipe(catchError(() => of(EMPTY_RESPONSE))),
+      nowPlaying: this.tmdbService.getNowPlayingMovies().pipe(catchError(() => of(EMPTY_RESPONSE))),
+      upcoming: this.tmdbService.getUpcomingMovies().pipe(catchError(() => of(EMPTY_RESPONSE))),
     })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: ({ genres, tvGenres, nowPlaying, popular, topRated, upcoming }) => {
+        next: ({ genres, popular, topRated, nowPlaying, upcoming }) => {
           this.cachedGenres = genres.genres;
-          this.cachedTvGenres = tvGenres.genres;
 
-          // Hero: prefer a now_playing film with backdrop; fall back to popular
-          const heroRaw = [...nowPlaying.results, ...popular.results].find(
-            (m) => !m.adult && !!m.backdrop_path,
-          );
-          this.heroMovie.set(
-            heroRaw ? this.mapper.mapTmdbMovieToMovie(heroRaw, this.cachedGenres) : null,
-          );
-
-          // "Melhores filmes" — popular
           this.popularMovies.set(
             this.mapper.mapTmdbMoviesToMovies(
               popular.results.filter((m) => !m.adult).slice(0, 20),
@@ -124,7 +97,6 @@ export class HomeComponent implements OnInit {
             ),
           );
 
-          // "Top 10 no Brasil" — top rated, with ranking numbers
           this.topRatedMovies.set(
             this.mapper.mapTmdbMoviesToMovies(
               topRated.results.filter((m) => !m.adult).slice(0, 10),
@@ -133,7 +105,14 @@ export class HomeComponent implements OnInit {
             ),
           );
 
-          // "Lançamentos" — upcoming
+          this.nowPlayingMovies.set(
+            this.mapper.mapTmdbMoviesToMovies(
+              nowPlaying.results.filter((m) => !m.adult).slice(0, 20),
+              this.cachedGenres,
+              { defaultTag: 'Em Cartaz' },
+            ),
+          );
+
           this.upcomingMovies.set(
             this.mapper.mapTmdbMoviesToMovies(
               upcoming.results.filter((m) => !m.adult).slice(0, 12),
@@ -145,9 +124,7 @@ export class HomeComponent implements OnInit {
           this.isLoading.set(false);
         },
         error: () => {
-          this.error.set(
-            'Não foi possível carregar o conteúdo. Verifique sua conexão e tente novamente.',
-          );
+          this.error.set('Não foi possível carregar os filmes. Verifique sua conexão e tente novamente.');
           this.isLoading.set(false);
         },
       });
@@ -208,4 +185,3 @@ export class HomeComponent implements OnInit {
     this.loadData();
   }
 }
-

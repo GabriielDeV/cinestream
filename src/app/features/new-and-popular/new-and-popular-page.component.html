@@ -1,0 +1,73 @@
+<app-site-header (search)="onSearch($event)" />
+
+@if (isLoading()) {
+  <div class="page-loading">
+    <app-loading />
+  </div>
+} @else if (error()) {
+  <main class="page-main">
+    <div class="page-error">
+      <app-error-message [message]="error()!" (retry)="onRetry()" />
+    </div>
+  </main>
+} @else {
+  <main class="page-main">
+    <div class="page-hero-text">
+      <h1 class="page-title">Novos e Populares</h1>
+    </div>
+
+    <div class="sections-container">
+      @if (isSearchActive()) {
+        @if (isSearchLoading()) {
+          <app-loading />
+        } @else if (searchError()) {
+          <app-error-message [message]="searchError()!" [showRetry]="false" />
+        } @else if (searchResults().length === 0) {
+          <app-error-message message="Nenhum resultado encontrado para sua busca." [showRetry]="false" />
+        } @else {
+          <app-movie-section
+            title="Resultados da busca"
+            [movies]="searchResults()"
+            layout="landscape"
+            (movieSelected)="onMovieSelected($event)"
+          />
+        }
+      } @else {
+        @if (trendingAll().length > 0) {
+          <app-movie-section
+            title="Em alta"
+            [movies]="trendingAll()"
+            layout="landscape"
+            (movieSelected)="onMovieSelected($event)"
+          />
+        }
+        @if (trendingMovies().length > 0) {
+          <app-movie-section
+            title="Filmes populares"
+            [movies]="trendingMovies()"
+            layout="landscape"
+            (movieSelected)="onMovieSelected($event)"
+          />
+        }
+        @if (trendingTv().length > 0) {
+          <app-movie-section
+            title="Séries populares"
+            [movies]="trendingTv()"
+            layout="poster"
+            (movieSelected)="onMovieSelected($event)"
+          />
+        }
+        @if (upcomingMovies().length > 0) {
+          <app-movie-section
+            title="Novidades"
+            [movies]="upcomingMovies()"
+            layout="poster"
+            (movieSelected)="onMovieSelected($event)"
+          />
+        }
+      }
+    </div>
+  </main>
+}
+
+<app-site-footer />

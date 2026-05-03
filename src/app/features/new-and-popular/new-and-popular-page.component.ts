@@ -18,59 +18,51 @@ import {
   switchMap,
   tap,
 } from 'rxjs/operators';
-import { TmdbGenre, TmdbMovieResponse } from '../../core/models/tmdb-movie.model';
+import { TmdbGenre, TmdbMovieResponse, TmdbTvResponse } from '../../core/models/tmdb-movie.model';
 import { Movie } from '../../core/models/movie.model';
 import { TmdbService } from '../../core/services/tmdb.service';
 import { MovieMapper } from '../../core/mappers/movie.mapper';
 import { SiteHeaderComponent } from '../../shared/components/site-header/site-header.component';
-import { HeroBannerComponent } from '../../shared/components/hero-banner/hero-banner.component';
-import { MovieSectionComponent } from './components/movie-section/movie-section.component';
+import { MovieSectionComponent } from '../home/components/movie-section/movie-section.component';
 import { SiteFooterComponent } from '../../shared/components/site-footer/site-footer.component';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import { ErrorMessageComponent } from '../../shared/components/error-message/error-message.component';
 
-const EMPTY_RESPONSE: TmdbMovieResponse = {
-  page: 1,
-  results: [],
-  total_pages: 0,
-  total_results: 0,
-};
+const EMPTY_RESPONSE: TmdbMovieResponse = { page: 1, results: [], total_pages: 0, total_results: 0 };
+const EMPTY_TV_RESPONSE: TmdbTvResponse = { page: 1, results: [], total_pages: 0, total_results: 0 };
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-new-and-popular-page',
   standalone: true,
   imports: [
     SiteHeaderComponent,
-    HeroBannerComponent,
     MovieSectionComponent,
     SiteFooterComponent,
     LoadingComponent,
     ErrorMessageComponent,
   ],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss',
+  templateUrl: './new-and-popular-page.component.html',
+  styleUrl: './new-and-popular-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeComponent implements OnInit {
+export class NewAndPopularPageComponent implements OnInit {
   private readonly tmdbService = inject(TmdbService);
   private readonly mapper = inject(MovieMapper);
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
 
-  /* ── Page state (signals for OnPush compatibility) ─────────────────── */
-  isLoading = signal(true);
-  error = signal<string | null>(null);
+  readonly isLoading = signal(true);
+  readonly error = signal<string | null>(null);
 
-  heroMovie = signal<Movie | null>(null);
-  popularMovies = signal<Movie[]>([]);
-  topRatedMovies = signal<Movie[]>([]);
-  upcomingMovies = signal<Movie[]>([]);
+  readonly trendingAll = signal<Movie[]>([]);
+  readonly trendingMovies = signal<Movie[]>([]);
+  readonly trendingTv = signal<Movie[]>([]);
+  readonly upcomingMovies = signal<Movie[]>([]);
 
-  /* ── Search state ───────────────────────────────────────────────────── */
-  searchResults = signal<Movie[]>([]);
-  isSearchActive = signal(false);
-  isSearchLoading = signal(false);
-  searchError = signal<string | null>(null);
+  readonly searchResults = signal<Movie[]>([]);
+  readonly isSearchActive = signal(false);
+  readonly isSearchLoading = signal(false);
+  readonly searchError = signal<string | null>(null);
 
   private cachedGenres: TmdbGenre[] = [];
   private cachedTvGenres: TmdbGenre[] = [];
@@ -83,57 +75,43 @@ export class HomeComponent implements OnInit {
 
   private loadData(): void {
     forkJoin({
-      genres: this.tmdbService
-        .getMovieGenres()
-        .pipe(catchError(() => of({ genres: [] as TmdbGenre[] }))),
-      tvGenres: this.tmdbService
-        .getTvShowGenres()
-        .pipe(catchError(() => of({ genres: [] as TmdbGenre[] }))),
-      nowPlaying: this.tmdbService
-        .getNowPlayingMovies()
-        .pipe(catchError(() => of(EMPTY_RESPONSE))),
-      popular: this.tmdbService
-        .getPopularMovies()
-        .pipe(catchError(() => of(EMPTY_RESPONSE))),
-      topRated: this.tmdbService
-        .getTopRatedMovies()
-        .pipe(catchError(() => of(EMPTY_RESPONSE))),
-      upcoming: this.tmdbService
-        .getUpcomingMovies()
-        .pipe(catchError(() => of(EMPTY_RESPONSE))),
+      movieGenres: this.tmdbService.getMovieGenres().pipe(catchError(() => of({ genres: [] as TmdbGenre[] }))),
+      tvGenres: this.tmdbService.getTvShowGenres().pipe(catchError(() => of({ genres: [] as TmdbGenre[] }))),
+      trendingAll: this.tmdbService.getTrendingAll().pipe(catchError(() => of({ page: 1, results: [], total_pages: 0, total_results: 0 } as any))),
+      trendingMovies: this.tmdbService.getTrendingMovies().pipe(catchError(() => of(EMPTY_RESPONSE))),
+      trendingTv: this.tmdbService.getTrendingTv().pipe(catchError(() => of(EMPTY_TV_RESPONSE))),
+      upcoming: this.tmdbService.getUpcomingMovies().pipe(catchError(() => of(EMPTY_RESPONSE))),
     })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: ({ genres, tvGenres, nowPlaying, popular, topRated, upcoming }) => {
-          this.cachedGenres = genres.genres;
+        next: ({ movieGenres, tvGenres, trendingAll, trendingMovies, trendingTv, upcoming }) => {
+          this.cachedGenres = movieGenres.genres;
           this.cachedTvGenres = tvGenres.genres;
 
-          // Hero: prefer a now_playing film with backdrop; fall back to popular
-          const heroRaw = [...nowPlaying.results, ...popular.results].find(
-            (m) => !m.adult && !!m.backdrop_path,
-          );
-          this.heroMovie.set(
-            heroRaw ? this.mapper.mapTmdbMovieToMovie(heroRaw, this.cachedGenres) : null,
-          );
-
-          // "Melhores filmes" — popular
-          this.popularMovies.set(
-            this.mapper.mapTmdbMoviesToMovies(
-              popular.results.filter((m) => !m.adult).slice(0, 20),
+          this.trendingAll.set(
+            this.mapper.mapMultiSearchResultsToMovies(
+              trendingAll.results.filter((i: any) => i.media_type !== 'person').slice(0, 20),
               this.cachedGenres,
+              this.cachedTvGenres,
             ),
           );
 
-          // "Top 10 no Brasil" — top rated, with ranking numbers
-          this.topRatedMovies.set(
+          this.trendingMovies.set(
             this.mapper.mapTmdbMoviesToMovies(
-              topRated.results.filter((m) => !m.adult).slice(0, 10),
+              trendingMovies.results.filter((m) => !m.adult).slice(0, 20),
               this.cachedGenres,
-              { withRanking: true },
+              { defaultTag: 'Em Alta' },
             ),
           );
 
-          // "Lançamentos" — upcoming
+          this.trendingTv.set(
+            this.mapper.mapTmdbTvShowsToMovies(
+              trendingTv.results.filter((s) => !s.adult).slice(0, 20),
+              this.cachedTvGenres,
+              { defaultTag: 'Em Alta' },
+            ),
+          );
+
           this.upcomingMovies.set(
             this.mapper.mapTmdbMoviesToMovies(
               upcoming.results.filter((m) => !m.adult).slice(0, 12),
@@ -145,9 +123,7 @@ export class HomeComponent implements OnInit {
           this.isLoading.set(false);
         },
         error: () => {
-          this.error.set(
-            'Não foi possível carregar o conteúdo. Verifique sua conexão e tente novamente.',
-          );
+          this.error.set('Não foi possível carregar o conteúdo. Verifique sua conexão e tente novamente.');
           this.isLoading.set(false);
         },
       });
@@ -208,4 +184,3 @@ export class HomeComponent implements OnInit {
     this.loadData();
   }
 }
-

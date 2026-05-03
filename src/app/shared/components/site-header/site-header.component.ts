@@ -1,8 +1,23 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Output,
+  signal,
+} from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+
+interface NavItem {
+  label: string;
+  path: string;
+  /** When true, only marks active on exact path match (used for the root route). */
+  exactMatch: boolean;
+}
 
 @Component({
   selector: 'app-site-header',
   standalone: true,
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './site-header.component.html',
   styleUrl: './site-header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -10,12 +25,11 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Output, signal } from
 export class SiteHeaderComponent {
   @Output() search = new EventEmitter<string>();
 
-  readonly navItems = [
-    { label: 'Início', active: true },
-    { label: 'Filmes', active: false },
-    { label: 'Séries', active: false },
-    { label: 'Novos e Populares', active: false },
-    { label: 'Minha Lista', active: false },
+  readonly navItems: NavItem[] = [
+    { label: 'Início', path: '/', exactMatch: true },
+    { label: 'Filmes', path: '/movies', exactMatch: false },
+    { label: 'Séries', path: '/series', exactMatch: false },
+    { label: 'Novos e Populares', path: '/new-and-popular', exactMatch: false },
   ];
 
   isSearchOpen = signal(false);

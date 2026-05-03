@@ -1,14 +1,19 @@
 <header class="site-header">
   <div class="header-inner">
     <div class="header-left">
-      <a class="logo" href="/">
+      <a class="logo" [routerLink]="['/']">
         <span class="logo-cine">Cine</span><span class="logo-stream">Stream</span>
       </a>
       <nav class="main-nav" aria-label="Navegação principal">
         <ul class="nav-list">
-          @for (item of navItems; track item.label) {
+          @for (item of navItems; track item.path) {
             <li>
-              <a class="nav-link" [class.active]="item.active" href="#">{{ item.label }}</a>
+              <a
+                class="nav-link"
+                [routerLink]="item.path"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: item.exactMatch }"
+              >{{ item.label }}</a>
             </li>
           }
         </ul>
@@ -22,11 +27,11 @@
             #searchInput
             class="search-input"
             type="search"
-            placeholder="Buscar filmes..."
+            placeholder="Buscar filmes e séries..."
             [value]="searchQuery()"
             (input)="onSearchInput($event)"
             (keydown.escape)="closeSearch()"
-            aria-label="Buscar filmes"
+            aria-label="Buscar filmes e séries"
             autofocus
           />
           <button class="icon-btn" type="button" aria-label="Fechar busca" (click)="closeSearch()">
