@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { TmdbGenreResponse, TmdbMovieResponse } from '../models/tmdb-movie.model';
+import { TmdbGenreResponse, TmdbMovieDetails, TmdbMovieResponse } from '../models/tmdb-movie.model';
 
 @Injectable({ providedIn: 'root' })
 export class TmdbService {
@@ -55,6 +55,13 @@ export class TmdbService {
   searchMovies(query: string, page = 1): Observable<TmdbMovieResponse> {
     return this.http.get<TmdbMovieResponse>(`${this.apiUrl}/search/movie`, {
       params: this.params({ query, page: String(page) }),
+    });
+  }
+
+  /** Detalhes completos de um filme pelo seu ID TMDB. */
+  getMovieById(id: number): Observable<TmdbMovieDetails> {
+    return this.http.get<TmdbMovieDetails>(`${this.apiUrl}/movie/${id}`, {
+      params: this.params(),
     });
   }
 }

@@ -30,3 +30,24 @@ export interface TmdbGenre {
   id: number;
   name: string;
 }
+
+/**
+ * Response shape from the TMDB /movie/{id} details endpoint.
+ * Unlike TmdbMovie (list item), genres here are full objects, not IDs.
+ */
+export interface TmdbMovieDetails {
+  adult: boolean;
+  backdrop_path: string | null;
+  genres: TmdbGenre[];
+  id: number;
+  original_language: string;
+  original_title: string;
+  overview: string;
+  popularity: number;
+  poster_path: string | null;
+  release_date: string;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+}

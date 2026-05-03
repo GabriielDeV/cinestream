@@ -3,10 +3,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   NgZone,
   OnChanges,
   OnDestroy,
+  Output,
   SimpleChanges,
   ViewChild,
   inject,
@@ -28,6 +30,9 @@ export class MovieSectionComponent implements AfterViewInit, OnChanges, OnDestro
   @Input({ required: true }) title!: string;
   @Input({ required: true }) movies!: Movie[];
   @Input() layout: MovieSectionLayout = 'landscape';
+
+  /** Propagates card selection to the parent (e.g. HomeComponent for navigation). */
+  @Output() movieSelected = new EventEmitter<Movie>();
 
   @ViewChild('scrollContainer', { static: false })
   scrollContainer!: ElementRef<HTMLElement>;

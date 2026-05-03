@@ -1,4 +1,12 @@
-<article class="ranking-card">
+<article
+  class="ranking-card"
+  role="button"
+  tabindex="0"
+  [attr.aria-label]="'Assistir ' + movie.title"
+  (click)="onCardClick()"
+  (keydown.enter)="onCardClick()"
+  (keydown.space)="onCardClick()"
+>
   <div class="ranking-number" aria-hidden="true">{{ movie.ranking }}</div>
   <div class="card-media">
     <img

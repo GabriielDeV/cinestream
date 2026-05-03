@@ -7,6 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 import { Subject, forkJoin, of } from 'rxjs';
 import {
   catchError,
@@ -54,6 +55,7 @@ export class HomeComponent implements OnInit {
   private readonly tmdbService = inject(TmdbService);
   private readonly mapper = inject(MovieMapper);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
 
   /* ── Page state (signals for OnPush compatibility) ─────────────────── */
   isLoading = signal(true);
@@ -186,6 +188,10 @@ export class HomeComponent implements OnInit {
 
   onSearch(query: string): void {
     this.searchSubject.next(query);
+  }
+
+  onMovieSelected(movie: Movie): void {
+    this.router.navigate(['/watch/movie', movie.id], { state: { movie } });
   }
 
   onRetry(): void {

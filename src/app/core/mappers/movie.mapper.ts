@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { TmdbGenre, TmdbMovie } from '../models/tmdb-movie.model';
+import { TmdbGenre, TmdbMovie, TmdbMovieDetails } from '../models/tmdb-movie.model';
 import { Movie } from '../models/movie.model';
 
 const POSTER_PLACEHOLDER = 'assets/images/movie-placeholder.jpg';
@@ -59,5 +59,26 @@ export class MovieMapper {
         }
         return movie;
       });
+  }
+
+  /** Maps a TMDB movie details response (from /movie/{id}) to the internal Movie model. */
+  mapTmdbMovieDetailsToMovie(details: TmdbMovieDetails): Movie {
+    const releaseYear = details.release_date
+      ? new Date(details.release_date + 'T12:00:00').getFullYear()
+      : null;
+
+    return {
+      id: details.id,
+      title: details.title,
+      description: details.overview?.trim() || NO_DESCRIPTION,
+      posterUrl: this.buildImageUrl(details.poster_path, 'w500'),
+      backdropUrl: this.buildImageUrl(details.backdrop_path, 'original'),
+      releaseDate: details.release_date,
+      releaseYear,
+      rating: Math.round(details.vote_average * 10) / 10,
+      genres: details.genres.map((g) => g.name),
+      ranking: undefined,
+      isFavorite: false,
+    };
   }
 }

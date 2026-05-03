@@ -8,6 +8,14 @@ export const routes: Routes = [
     title: 'CineStream – Sua plataforma de streaming',
   },
   {
+    path: 'watch/movie/:id',
+    loadComponent: () =>
+      import('./features/watch/pages/watch-movie/watch-movie.component').then(
+        (m) => m.WatchMovieComponent,
+      ),
+    title: 'Assistir – CineStream',
+  },
+  {
     path: '**',
     redirectTo: '',
   },

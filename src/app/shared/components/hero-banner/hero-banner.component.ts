@@ -1,7 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   Input,
+  Output,
 } from '@angular/core';
 import { Movie } from '../../../core/models/movie.model';
 
@@ -14,6 +16,13 @@ import { Movie } from '../../../core/models/movie.model';
 })
 export class HeroBannerComponent {
   @Input({ required: true }) movie!: Movie;
+
+  /** Emitted when the user clicks "Assistir agora". */
+  @Output() watchNow = new EventEmitter<Movie>();
+
+  onWatchNow(): void {
+    this.watchNow.emit(this.movie);
+  }
 
   get backgroundStyle(): Record<string, string> {
     return {

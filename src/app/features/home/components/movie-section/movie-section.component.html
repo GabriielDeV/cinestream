@@ -24,7 +24,7 @@
       @if (layout === 'ranking') {
         <div class="cards-row cards-row--ranking">
           @for (movie of movies; track movie.id) {
-            <app-ranking-card [movie]="movie" />
+            <app-ranking-card [movie]="movie" (movieSelected)="movieSelected.emit($event)" />
           }
         </div>
       } @else {
@@ -34,7 +34,7 @@
           [class.cards-row--landscape]="layout === 'landscape'"
         >
           @for (movie of movies; track movie.id) {
-            <app-movie-card [movie]="movie" [layout]="cardLayout" />
+            <app-movie-card [movie]="movie" [layout]="cardLayout" (movieSelected)="movieSelected.emit($event)" />
           }
         </div>
       }

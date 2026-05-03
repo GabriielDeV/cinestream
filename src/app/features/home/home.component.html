@@ -13,7 +13,7 @@
 } @else {
   <main class="home-main">
     @if (heroMovie()) {
-      <app-hero-banner [movie]="heroMovie()!" />
+      <app-hero-banner [movie]="heroMovie()!" (watchNow)="onMovieSelected($event)" />
     }
 
     <div class="sections-container">
@@ -32,6 +32,7 @@
             title="Resultados da busca"
             [movies]="searchResults()"
             layout="landscape"
+            (movieSelected)="onMovieSelected($event)"
           />
         }
       } @else {
@@ -40,6 +41,7 @@
             title="Melhores filmes"
             [movies]="popularMovies()"
             layout="landscape"
+            (movieSelected)="onMovieSelected($event)"
           />
         }
         @if (topRatedMovies().length > 0) {
@@ -47,6 +49,7 @@
             title="Top 10 no Brasil"
             [movies]="topRatedMovies()"
             layout="ranking"
+            (movieSelected)="onMovieSelected($event)"
           />
         }
         @if (upcomingMovies().length > 0) {
@@ -54,6 +57,7 @@
             title="Lançamentos"
             [movies]="upcomingMovies()"
             layout="poster"
+            (movieSelected)="onMovieSelected($event)"
           />
         }
       }
