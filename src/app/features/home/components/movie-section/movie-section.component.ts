@@ -72,24 +72,35 @@ export class MovieSectionComponent implements AfterViewInit, OnChanges, OnDestro
     const el = this.scrollContainer.nativeElement;
     const amount = this.getScrollAmount(el);
     const maxScroll = el.scrollWidth - el.clientWidth;
+    const tolerance = 8;
 
-    if (el.scrollLeft + amount >= maxScroll - 8) {
-      // Loop: jump back to the start.
+    const isAtEnd = el.scrollLeft >= maxScroll - tolerance;
+
+    if (isAtEnd) {
+      // Loop: already at the end, jump back to the start.
       el.scrollTo({ left: 0, behavior: 'smooth' });
     } else {
-      el.scrollBy({ left: amount, behavior: 'smooth' });
+      // Advance, but never exceed maxScroll.
+      const nextScrollLeft = Math.min(el.scrollLeft + amount, maxScroll);
+      el.scrollTo({ left: nextScrollLeft, behavior: 'smooth' });
     }
   }
 
   scrollLeft(): void {
     const el = this.scrollContainer.nativeElement;
     const amount = this.getScrollAmount(el);
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    const tolerance = 8;
 
-    if (el.scrollLeft <= 8) {
-      // Loop: jump to the end.
-      el.scrollTo({ left: el.scrollWidth - el.clientWidth, behavior: 'smooth' });
+    const isAtStart = el.scrollLeft <= tolerance;
+
+    if (isAtStart) {
+      // Loop: already at the start, jump to the end.
+      el.scrollTo({ left: maxScroll, behavior: 'smooth' });
     } else {
-      el.scrollBy({ left: -amount, behavior: 'smooth' });
+      // Go back, but never go below 0.
+      const previousScrollLeft = Math.max(el.scrollLeft - amount, 0);
+      el.scrollTo({ left: previousScrollLeft, behavior: 'smooth' });
     }
   }
 

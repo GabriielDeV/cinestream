@@ -19,21 +19,29 @@
     }
   }
 
-  /* Landscape 16:9 */
+  /* Landscape 16:9 — uses backdrop image */
   &--landscape {
     width: 280px;
 
     .card-media {
       aspect-ratio: 16 / 9;
     }
+
+    .card-image {
+      object-position: center center;
+    }
   }
 
-  /* Poster 2:3 */
+  /* Poster 2:3 — uses portrait artwork */
   &--poster {
     width: 160px;
 
     .card-media {
       aspect-ratio: 2 / 3;
+    }
+
+    .card-image {
+      object-position: center top;
     }
   }
 }
