@@ -1,0 +1,84 @@
+@if (isLoading) {
+  <div class="sr-loading">
+    <app-loading />
+  </div>
+} @else if (error) {
+  <div class="sr-feedback">
+    <app-error-message [message]="error" [showRetry]="false" />
+  </div>
+} @else if (results.length === 0) {
+  <div class="sr-feedback">
+    <app-error-message
+      message="Nenhum resultado encontrado para sua busca."
+      [showRetry]="false"
+    />
+  </div>
+} @else {
+  <section class="sr-section">
+    <header class="sr-header">
+      <h2 class="sr-title">Resultados para <em class="sr-query">"{{ query }}"</em></h2>
+      <p class="sr-subtitle">{{ resultsLabel }}</p>
+    </header>
+
+    <div class="sr-grid">
+      @for (movie of results; track trackById($index, movie)) {
+        <article
+          class="sr-card"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="'Assistir ' + movie.title"
+          (click)="onCardClick(movie)"
+          (keydown.enter)="onCardClick(movie)"
+          (keydown.space)="onCardClick(movie)"
+        >
+          <!-- Image area -->
+          <div class="sr-card-media">
+            <img
+              class="sr-card-img"
+              [src]="getImageSrc(movie)"
+              [alt]="movie.title"
+              loading="lazy"
+              (error)="onImageError($event)"
+            />
+            <!-- Hover overlay with play icon -->
+            <div class="sr-card-overlay" aria-hidden="true">
+              <svg
+                class="sr-play-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="11" fill="rgba(0,0,0,0.45)" />
+                <polygon points="10 8 16 12 10 16 10 8" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Info area -->
+          <div class="sr-card-info">
+            <div class="sr-card-meta">
+              <span class="sr-type-badge sr-type-badge--{{ movie.mediaType }}">
+                {{ getTypeLabel(movie) }}
+              </span>
+              @if (movie.releaseYear) {
+                <span class="sr-year">{{ movie.releaseYear }}</span>
+              }
+            </div>
+            <div class="sr-card-bottom">
+              <h3 class="sr-card-title">{{ movie.title }}</h3>
+              @if (movie.rating) {
+                <div class="sr-rating-badge">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                  <span>{{ movie.rating }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+}

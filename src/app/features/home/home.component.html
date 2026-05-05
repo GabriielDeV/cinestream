@@ -1,4 +1,4 @@
-<app-site-header (search)="onSearch($event)" />
+<app-site-header (search)="onSearch($event)" (homeSelected)="clearSearch()" />
 
 @if (isLoading()) {
   <div class="page-loading">
@@ -12,29 +12,21 @@
   </main>
 } @else {
   <main class="home-main">
-    @if (heroMovie()) {
+    @if (heroMovie() && !isSearchActive()) {
       <app-hero-banner [movie]="heroMovie()!" (watchNow)="onMovieSelected($event)" />
     }
 
     <div class="sections-container">
       @if (isSearchActive()) {
-        @if (isSearchLoading()) {
-          <app-loading />
-        } @else if (searchError()) {
-          <app-error-message [message]="searchError()!" [showRetry]="false" />
-        } @else if (searchResults().length === 0) {
-          <app-error-message
-            message="Nenhum filme encontrado para sua busca."
-            [showRetry]="false"
+        <div class="search-results-container">
+          <app-search-results
+            [query]="searchQuery()"
+            [results]="searchResults()"
+            [isLoading]="isSearchLoading()"
+            [error]="searchError()"
+            (contentSelected)="onMovieSelected($event)"
           />
-        } @else {
-          <app-movie-section
-            title="Resultados da busca"
-            [movies]="searchResults()"
-            layout="landscape"
-            (movieSelected)="onMovieSelected($event)"
-          />
-        }
+        </div>
       } @else {
         @if (popularMovies().length > 0) {
           <app-movie-section

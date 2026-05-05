@@ -24,6 +24,8 @@ interface NavItem {
 })
 export class SiteHeaderComponent {
   @Output() search = new EventEmitter<string>();
+  /** Emitted when the user clicks the logo or the "Início" nav item. */
+  @Output() homeSelected = new EventEmitter<void>();
 
   readonly navItems: NavItem[] = [
     { label: 'Início', path: '/', exactMatch: true },
@@ -43,6 +45,12 @@ export class SiteHeaderComponent {
     this.isSearchOpen.set(false);
     this.searchQuery.set('');
     this.search.emit('');
+  }
+
+  /** Called by the logo and "Início" link; resets the search input and notifies the parent. */
+  onHomeClick(): void {
+    this.closeSearch();
+    this.homeSelected.emit();
   }
 
   onSearchInput(event: Event): void {

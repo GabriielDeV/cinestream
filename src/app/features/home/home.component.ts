@@ -28,6 +28,7 @@ import { MovieSectionComponent } from './components/movie-section/movie-section.
 import { SiteFooterComponent } from '../../shared/components/site-footer/site-footer.component';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 import { ErrorMessageComponent } from '../../shared/components/error-message/error-message.component';
+import { SearchResultsComponent } from '../../shared/components/search-results/search-results.component';
 
 const EMPTY_RESPONSE: TmdbMovieResponse = {
   page: 1,
@@ -46,6 +47,7 @@ const EMPTY_RESPONSE: TmdbMovieResponse = {
     SiteFooterComponent,
     LoadingComponent,
     ErrorMessageComponent,
+    SearchResultsComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -67,6 +69,7 @@ export class HomeComponent implements OnInit {
   upcomingMovies = signal<Movie[]>([]);
 
   /* ── Search state ───────────────────────────────────────────────────── */
+  searchQuery = signal('');
   searchResults = signal<Movie[]>([]);
   isSearchActive = signal(false);
   isSearchLoading = signal(false);
@@ -164,6 +167,7 @@ export class HomeComponent implements OnInit {
             this.searchResults.set([]);
             this.isSearchLoading.set(false);
             this.searchError.set(null);
+            this.searchQuery.set(query);
           }
         }),
         filter((query) => query.trim().length >= 2),
@@ -194,12 +198,21 @@ export class HomeComponent implements OnInit {
   }
 
   onSearch(query: string): void {
+    this.searchQuery.set(query);
     this.searchSubject.next(query);
   }
 
   onMovieSelected(movie: Movie): void {
     const route = movie.mediaType === 'tv' ? '/watch/tv' : '/watch/movie';
     this.router.navigate([route, movie.id], { state: { movie } });
+  }
+
+  clearSearch(): void {
+    this.isSearchActive.set(false);
+    this.isSearchLoading.set(false);
+    this.searchQuery.set('');
+    this.searchResults.set([]);
+    this.searchError.set(null);
   }
 
   onRetry(): void {
