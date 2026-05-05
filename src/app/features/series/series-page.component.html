@@ -28,7 +28,7 @@
           <app-movie-section
             title="Resultados da busca"
             [movies]="searchResults()"
-            layout="landscape"
+            layout="poster"
             (movieSelected)="onMovieSelected($event)"
           />
         }
@@ -37,7 +37,7 @@
           <app-movie-section
             title="Séries populares"
             [movies]="popularSeries()"
-            layout="landscape"
+            layout="poster"
             (movieSelected)="onMovieSelected($event)"
           />
         }
@@ -53,7 +53,7 @@
           <app-movie-section
             title="No ar"
             [movies]="onTheAirSeries()"
-            layout="landscape"
+            layout="poster"
             (movieSelected)="onMovieSelected($event)"
           />
         }

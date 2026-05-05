@@ -28,7 +28,7 @@
           <app-movie-section
             title="Resultados da busca"
             [movies]="searchResults()"
-            layout="landscape"
+            layout="poster"
             (movieSelected)="onMovieSelected($event)"
           />
         }
@@ -37,7 +37,7 @@
           <app-movie-section
             title="Filmes populares"
             [movies]="popularMovies()"
-            layout="landscape"
+            layout="poster"
             (movieSelected)="onMovieSelected($event)"
           />
         }
@@ -53,7 +53,7 @@
           <app-movie-section
             title="Em cartaz"
             [movies]="nowPlayingMovies()"
-            layout="landscape"
+            layout="poster"
             (movieSelected)="onMovieSelected($event)"
           />
         }

@@ -34,7 +34,7 @@ export class SearchResultsComponent {
   }
 
   getImageSrc(movie: Movie): string {
-    return movie.backdropUrl || movie.posterUrl || PLACEHOLDER_IMAGE;
+    return movie.posterUrl || movie.backdropUrl || PLACEHOLDER_IMAGE;
   }
 
   getTypeLabel(movie: Movie): string {

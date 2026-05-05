@@ -28,7 +28,7 @@
           <app-movie-section
             title="Resultados da busca"
             [movies]="searchResults()"
-            layout="landscape"
+            layout="poster"
             (movieSelected)="onMovieSelected($event)"
           />
         }
@@ -37,7 +37,7 @@
           <app-movie-section
             title="Em alta"
             [movies]="trendingAll()"
-            layout="landscape"
+            layout="poster"
             (movieSelected)="onMovieSelected($event)"
           />
         }
@@ -45,7 +45,7 @@
           <app-movie-section
             title="Filmes populares"
             [movies]="trendingMovies()"
-            layout="landscape"
+            layout="poster"
             (movieSelected)="onMovieSelected($event)"
           />
         }

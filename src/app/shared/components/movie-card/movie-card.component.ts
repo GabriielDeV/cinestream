@@ -23,13 +23,10 @@ export class MovieCardComponent {
   /** Emitted when the user clicks the card body (not the add-to-list button). */
   @Output() movieSelected = new EventEmitter<Movie>();
 
-  /** Returns the best image URL for the current layout.
-   *  landscape → backdrop (16:9); poster → poster art (2:3). */
+  /** Returns the best image URL for any layout.
+   *  Priority: posterUrl → backdropUrl → placeholder. */
   get imageSrc(): string {
-    if (this.layout === 'landscape') {
-      return this.movie.backdropUrl || this.movie.posterUrl;
-    }
-    return this.movie.posterUrl;
+    return this.movie.posterUrl || this.movie.backdropUrl || PLACEHOLDER_IMAGE;
   }
 
   onCardClick(): void {
@@ -43,14 +40,11 @@ export class MovieCardComponent {
 
   onImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
-    // For landscape: try poster as second chance before the static placeholder
-    if (
-      this.layout === 'landscape' &&
-      !img.dataset['fallback'] &&
-      img.src !== this.movie.posterUrl
-    ) {
+    // posterUrl was tried first; cascade to backdropUrl before static placeholder.
+    const secondary = this.movie.backdropUrl;
+    if (!img.dataset['fallback'] && secondary && img.src !== secondary) {
       img.dataset['fallback'] = 'true';
-      img.src = this.movie.posterUrl;
+      img.src = secondary;
     } else {
       img.src = PLACEHOLDER_IMAGE;
     }
